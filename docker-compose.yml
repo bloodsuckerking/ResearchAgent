@@ -1,0 +1,28 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      AUTH_MODE: ${AUTH_MODE:-owner}
+      DATABASE_PATH: /app/data/research-agent.sqlite
+    volumes:
+      - app_data:/app/data
+    ports:
+      - "${APP_PORT:-3000}:3000"
+
+  admin:
+    build: .
+    profiles: ["tools"]
+    env_file:
+      - .env
+    environment:
+      AUTH_MODE: ${AUTH_MODE:-owner}
+      DATABASE_PATH: /app/data/research-agent.sqlite
+    volumes:
+      - app_data:/app/data
+    command: sh -c "npm run admin:create"
+
+volumes:
+  app_data:
